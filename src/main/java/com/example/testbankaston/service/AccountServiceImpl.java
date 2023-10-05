@@ -7,6 +7,7 @@ import com.example.testbankaston.exceptions.NotFoundException;
 import com.example.testbankaston.mapper.Mapper;
 import com.example.testbankaston.model.Account;
 import com.example.testbankaston.repository.Repository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AccountServiceImpl implements AccountService {
     private final Repository repository;
 
     @Override
+    @Transactional
     public List<AccountStatus> getAll() {
         return repository.findAll().stream()
                 .map(Mapper::toAccountStatus)
@@ -30,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountCreateDto createAccount(AccountCreateDto newAccount) {
         Account result = Mapper.toAccount(newAccount);
         result.setDeposit(BigDecimal.valueOf(0));
@@ -37,6 +41,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountStatus operationAccount(Long id, AccountOperationDto newOperation) {
         Account account = checkAccount(id);
         switch (newOperation.getOperation()) {
